@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-carabot — cara ASCII en terminal sobre lluvia estilo cmatrix.
+Fuji — cara ASCII en terminal sobre lluvia estilo cmatrix.
 Parpadea, mueve la boca sincronizada con la voz y responde por voz.
 
   T/Enter  escribir una pregunta (Enter envía, Esc cancela)
@@ -81,7 +81,7 @@ CFG = {
     "claude_effort": os.getenv("CLAUDE_EFFORT", "low"),                # low = respuestas más rápidas
     # única carpeta donde puede escribir: la memoria persistente (compartida con Claude Code)
     "claude_memory": os.getenv("CLAUDE_MEMORY") or claude_memory_dir(os.path.expanduser(os.getenv("CLAUDE_CWD", "~"))),
-    "claude_system": ("El usuario te habla por voz o por teclado a través de Fujibot, una cara ASCII "
+    "claude_system": ("El usuario te habla por voz o por teclado a través de Fuji, una cara ASCII "
                       "en su terminal. Responde en español, breve (máximo 4 frases), en texto plano, "
                       "sin markdown ni emojis: tu respuesta se lee en voz alta y se escribe letra a letra. "
                       "Puedes leer archivos y ejecutar comandos de Bash: el usuario verá cada comando encima "
@@ -89,7 +89,7 @@ CFG = {
                       "Fuera de tu carpeta de memoria persistente no escribas archivos salvo que te lo pida. "
                       "Cuando te pida que recuerdes algo, o aprendas algo duradero sobre él, guárdalo en la "
                       "memoria siguiendo tus instrucciones de memoria."),
-    # cuándo vuelve a haber uso de Claude tras agotarlo (sobrevive a reinicios de Fujibot)
+    # cuándo vuelve a haber uso de Claude tras agotarlo (sobrevive a reinicios de Fuji)
     "sleep_file": os.path.expanduser("~/.cache/fujibot-sleep"),
     "whisper_model": os.getenv("WHISPER_MODEL", "small"),       # tiny|base|small|medium
     "whisper_device": os.getenv("WHISPER_DEVICE", "cpu"),       # cpu | cuda
@@ -259,7 +259,7 @@ def read_bracketed_paste(scr):
                 break
     return buf
 
-# ───────────────────────── límite de uso: Fujibot "duerme" ─────────────────────────
+# ───────────────────────── límite de uso: Fuji "duerme" ─────────────────────────
 class Sleeping(Exception):
     pass
 
@@ -568,7 +568,7 @@ def transcribe(audio):
 def http_json(url, body, headers, timeout=120):
     req = urllib.request.Request(url, data=json.dumps(body).encode(),
                                  headers={"content-type": "application/json",
-                                          "user-agent": "carabot/1.0", **headers})
+                                          "user-agent": "fuji/1.0", **headers})
     try:
         with urllib.request.urlopen(req, timeout=timeout) as r:
             return json.load(r)
@@ -611,7 +611,7 @@ class ClaudeSession:
                 "--tools", "Read", "Grep", "Glob", "Bash", "Write", "Edit",
                 # la memoria se escribe sin preguntar; todo comando de Bash pregunta siempre
                 # (incluso los de solo lectura) y cualquier otra acción que necesite permiso
-                # llega a Fujibot como petición, que el usuario acepta o deniega
+                # llega a Fuji como petición, que el usuario acepta o deniega
                 "--allowedTools", f"Write({CFG['claude_memory']}/**)", f"Edit({CFG['claude_memory']}/**)",
                 "--settings", json.dumps({"permissions": {"ask": ["Bash"]}}),
                 "--permission-mode", "manual",
@@ -681,7 +681,7 @@ class ClaudeSession:
         else:
             self._send({"type": "control_response",
                         "response": {"subtype": "error", "request_id": rid,
-                                     "error": f"Fujibot no soporta {req.get('subtype')}"}})
+                                     "error": f"Fuji no soporta {req.get('subtype')}"}})
 
     def ask(self, text, on_delta=None, images=None):
         with self.lock:
@@ -1129,7 +1129,7 @@ def draw_input(scr, y, w, width):
         curses.color_pair(4) | curses.A_BOLD if note else frame)
 
 HIST_STYLE = {  # rol → (etiqueta, color, negrita)
-    "user": ("Tú", 3, True), "assistant": ("Fujibot", 2, True),
+    "user": ("Tú", 3, True), "assistant": ("Fuji", 2, True),
     "tool": ("", 4, False), "system": ("", 1, False),
 }
 
@@ -1367,7 +1367,7 @@ if __name__ == "__main__":
     load_sleep()
     if CFG["backend"] == "claude" and not S.sleep_until:
         CLAUDE.warm()
-    sys.stdout.write("\x1b]0;Fujibot\x07")  # título de la ventana
+    sys.stdout.write("\x1b]0;Fuji\x07")  # título de la ventana
     sys.stdout.flush()
     sys.stdout.write("\x1b[?2004h")  # pegado entre corchetes: el terminal marca lo pegado
     sys.stdout.flush()
