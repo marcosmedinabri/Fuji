@@ -1,0 +1,11 @@
+# Secretos: nunca al repo
+env
+.env
+*.env
+!env.example
+backups/
+
+# Basura
+__pycache__/
+*.pyc
+*.bak
