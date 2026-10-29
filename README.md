@@ -13,7 +13,7 @@
 │                            │                      {___
 ├────────────────────────────┤
 │                            │        Tu asistente personal en la terminal,
-│     ━━━           ━━━━     │        conectado a Claude Code
+│     ━━━           ━━━  │            conectado a Claude Code
 │                            │
 └────────────────────────────┘
    ┌─────────────────────┐
